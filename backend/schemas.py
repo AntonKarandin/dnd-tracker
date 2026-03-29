@@ -18,11 +18,11 @@ class CreatureOut(CreatureCreate):
 
 
 class CreatureUpdate(BaseModel):
-    hp: int | None
-    max_hp: int | None
-    temp_hp: int | None
-    ac: int | None
-    initiative: int | None
+    hp: int | None = None
+    max_hp: int | None = None
+    temp_hp: int | None = None
+    ac: int | None = None
+    initiative: int | None = None
 
 
 class AmountIn(BaseModel):
