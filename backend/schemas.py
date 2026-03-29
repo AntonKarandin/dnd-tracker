@@ -19,7 +19,11 @@ class CreatureOut(CreatureCreate):
 
 class CreatureUpdate(BaseModel):
     hp: int | None
+    max_hp: int | None
     temp_hp: int | None
     ac: int | None
-    speed: int | None
     initiative: int | None
+
+
+class AmountIn(BaseModel):
+    amount: int = Field(..., gt=0)

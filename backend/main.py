@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
 
-from backend.database import init_db, AsyncSessionLocal
+from backend.database import init_db
 from backend.router.creature import router as creature_router
 
 
