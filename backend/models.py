@@ -13,7 +13,6 @@ class Creature(Base):
     temp_hp: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     ac: Mapped[int] = mapped_column(Integer, nullable=False, default=10)
     speed: Mapped[int] = mapped_column(Integer, nullable=False, default=30)
-    initiative: Mapped[int] = mapped_column(Integer, nullable=False, default=10)
 
     instances: Mapped[list["CombatInstance"]] = relationship(
         "CombatInstance",

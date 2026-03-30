@@ -50,7 +50,7 @@ async def spawn_create(
             temp_hp=0,
             ac=template.ac,
             speed=template.speed,
-            initiative=template.initiative
+            initiative=0
         )
         db.add(instance)
         created.append(instance)

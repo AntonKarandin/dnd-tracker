@@ -12,9 +12,9 @@ router = APIRouter(prefix="/api/tracker", tags=["tracker"])
 @router.get("", response_model=list[CreatureOut])
 async def list_creatures(db: AsyncSession = Depends(get_db),
                          search: str | None = None):
-    query = select(Creature).order_by(Creature.initiative.desc())
+    query = select(Creature).order_by(Creature.name)
     if search:
-        query = query.where(Creature.name.ilike(f"{search}"))
+        query = query.where(Creature.name.ilike(f"%{search}%"))
     result = await db.execute(query)
     return result.scalars().all()
 
@@ -27,8 +27,7 @@ async def create_creature(payload: CreatureCreate, db: AsyncSession = Depends(ge
         hp=payload.hp,
         temp_hp=payload.temp_hp,
         ac=payload.ac,
-        speed=payload.speed,
-        initiative=payload.initiative
+        speed=payload.speed
     )
     db.add(creache)
     await db.commit()
