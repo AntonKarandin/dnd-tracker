@@ -27,7 +27,8 @@ async def create_creature(payload: CreatureCreate, db: AsyncSession = Depends(ge
         hp=payload.hp,
         temp_hp=payload.temp_hp,
         ac=payload.ac,
-        speed=payload.speed
+        speed=payload.speed,
+        initiative_bonus=payload.initiative_bonus
     )
     db.add(creache)
     await db.commit()

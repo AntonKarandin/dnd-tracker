@@ -8,6 +8,7 @@ class CreatureCreate(BaseModel):
     temp_hp: int = Field(default=0)
     ac: int
     speed: int
+    initiative_bonus: int = Field(default=0)
 
 
 class CreatureOut(CreatureCreate):

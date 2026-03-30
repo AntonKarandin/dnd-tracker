@@ -34,7 +34,7 @@ const css = `
     border-radius: 12px; padding: 20px; margin-bottom: 24px;
     display: grid; gap: 10px; align-items: end;
   }
-  .add-form.library-form { grid-template-columns: 2fr 1fr 1fr 1fr auto; }
+  .add-form.library-form { grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto; }
   .add-form.spawn-form   { grid-template-columns: 1fr auto; }
   .field { display: flex; flex-direction: column; gap: 5px; }
   .field label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; font-family: 'Cinzel', serif; }
@@ -271,7 +271,7 @@ function LibraryTab() {
   const [saving,    setSaving]    = useState(false);
   const [error,     setError]     = useState("");
   const [spawnCounts, setSpawnCounts] = useState({});
-  const [form, setForm] = useState({ name: "", hp: "", ac: "", speed: "", initiative: "" });
+  const [form, setForm] = useState({ name: "", hp: "", ac: "", speed: "", initiative_bonus: "" });
 
   useEffect(() => {
     api.fetchCreatures(search).then(setCreatures).catch(() => setError("Ошибка загрузки библиотеки"));
@@ -284,7 +284,7 @@ function LibraryTab() {
     const hp  = parseInt(form.hp);
     const ac  = parseInt(form.ac);
     const spd = parseInt(form.speed);
-    const ini = parseInt(form.initiative);
+    const ini = parseInt(form.initiative_bonus);
     if (!form.name.trim() || isNaN(hp) || hp <= 0) return;
     setSaving(true);
     try {
@@ -293,10 +293,10 @@ function LibraryTab() {
         temp_hp: 0,
         ac: isNaN(ac) ? 10 : ac,
         speed: isNaN(spd) ? 30 : spd,
-        initiative: isNaN(ini) ? 0 : ini,
+        initiative_bonus: isNaN(ini) ? 0 : ini,
       });
       setCreatures(prev => [...prev, created]);
-      setForm({ name: "", hp: "", ac: "", speed: "", initiative: "" });
+      setForm({ name: "", hp: "", ac: "", speed: "", initiative_bonus: "" });
     } catch { setError("Ошибка при создании"); }
     finally { setSaving(false); }
   }
@@ -324,6 +324,8 @@ function LibraryTab() {
           <input type="number" placeholder="13" value={form.ac} onChange={e => setField("ac", e.target.value)} onKeyDown={e => e.key === "Enter" && addCreature()} /></div>
         <div className="field"><label>Скорость</label>
           <input type="number" placeholder="30" value={form.speed} onChange={e => setField("speed", e.target.value)} onKeyDown={e => e.key === "Enter" && addCreature()} /></div>
+         <div className="field"><label>Бонус иниц.</label>
+          <input type="number" placeholder="0" value={form.initiative_bonus} onChange={e => setField("initiative_bonus", e.target.value)} onKeyDown={e => e.key === "Enter" && addCreature()} /></div>
         <button className="btn-add" onClick={addCreature} disabled={saving}>{saving ? "..." : "+ Добавить"}</button>
       </div>
 
@@ -340,7 +342,7 @@ function LibraryTab() {
               <span className="lib-stat">HP <span>{c.max_hp}</span></span>
               <span className="lib-stat">КБ <span>{c.ac}</span></span>
               <span className="lib-stat">Скорость <span>{c.speed} фт</span></span>
-              <span className="lib-stat">Инициатива <span>{c.initiative}</span></span>
+              <span className="lib-stat">Бонус иниц. <span>{c.initiative_bonus}</span></span>
             </div>
             <div className="lib-actions">
               <input className="spawn-count" type="number" min="1" max="20" placeholder="1"
