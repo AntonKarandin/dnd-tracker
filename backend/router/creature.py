@@ -4,16 +4,18 @@ from sqlalchemy import select
 
 from backend.database import get_db
 from backend.models import Creature
-from backend.schemas import CreatureCreate, CreatureUpdate, CreatureOut, AmountIn
+from backend.schemas import CreatureCreate, CreatureUpdate, CreatureOut
 
 router = APIRouter(prefix="/api/tracker", tags=["tracker"])
 
 
 @router.get("", response_model=list[CreatureOut])
-async def list_creatures(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(
-        select(Creature).order_by(Creature.initiative.desc())
-    )
+async def list_creatures(db: AsyncSession = Depends(get_db),
+                         search: str | None = None):
+    query = select(Creature).order_by(Creature.initiative.desc())
+    if search:
+        query = query.where(Creature.name.ilike(f"{search}"))
+    result = await db.execute(query)
     return result.scalars().all()
 
 
@@ -67,35 +69,6 @@ async def update_creature(id: int, payload: CreatureUpdate,db: AsyncSession = De
     if payload.max_hp is not None:
         creature.max_hp = payload.max_hp
         creature.hp = min(creature.max_hp, creature.hp)
-
-    await db.commit()
-    await db.refresh(creature)
-    return creature
-
-
-@router.post("/{id}/damage", response_model=CreatureOut)
-async def damage_in(id: int, damage: AmountIn, db: AsyncSession = Depends(get_db)):
-    creature = await _get_creature_or_404(id, db)
-    if creature.temp_hp > 0 and creature.temp_hp > damage.amount:
-        creature.temp_hp = creature.temp_hp - damage.amount
-    elif creature.temp_hp > 0 and creature.temp_hp < damage.amount:
-        creature.hp = creature.hp - damage.amount + creature.temp_hp
-        creature.temp_hp = 0
-    else:
-        creature.hp = creature.hp - damage.amount
-
-    creature.hp = max(0, creature.hp)
-
-    await db.commit()
-    await db.refresh(creature)
-    return creature
-
-
-@router.post("/{id}/heal", response_model=CreatureOut)
-async def heal_in(id: int, heal: AmountIn, db: AsyncSession = Depends(get_db)):
-    creature = await _get_creature_or_404(id, db)
-    creature.hp = creature.hp + heal.amount
-    creature.hp = min(creature.max_hp, creature.hp)
 
     await db.commit()
     await db.refresh(creature)

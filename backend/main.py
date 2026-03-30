@@ -8,6 +8,7 @@ import os
 
 from backend.database import init_db
 from backend.router.creature import router as creature_router
+from backend.router.combat import router as combat_router
 
 
 @asynccontextmanager
@@ -25,6 +26,7 @@ app.add_middleware(
 )
 
 app.include_router(creature_router)
+app.include_router(combat_router)
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
 if os.path.isdir(STATIC_DIR):
